@@ -45,19 +45,26 @@ function getCookie(name) {
     return cookieValue;
 }
 
-// Set constraints for the video stream
-var constraints = { video: { facingMode: "environment" }, audio: false };
+
 
 document.getElementById('start-camera').addEventListener('click', function startCamera() {
+    let currentFacingMode = constraints.video.facingMode;
+
+    if (currentFacingMode === 'environment') {
+        constraints.video.facingMode = 'user'; // switch to front-facing camera
+    } else {
+        constraints.video.facingMode = 'environment'; // switch to back-facing camera
+    }
+
     navigator.mediaDevices.getUserMedia(constraints)
         .then(function (stream) {
             track = stream.getTracks()[0];
-            let player = document.getElementById('player');
             player.srcObject = stream;
         })
         .catch(function (err) {
             console.error('Error accessing the camera: ', err);
         });
+
     let elements = ['capture', 'player', 'img-view', 'start-camera'];
 
     elements.forEach(id => {
@@ -68,8 +75,29 @@ document.getElementById('start-camera').addEventListener('click', function start
             element.style.display = 'none';
         }
     });
-
 });
+
+// document.getElementById('start-camera').addEventListener('click', function startCamera() {
+//     navigator.mediaDevices.getUserMedia(constraints)
+//         .then(function (stream) {
+//             track = stream.getTracks()[0];
+//             player.srcObject = stream;
+//         })
+//         .catch(function (err) {
+//             console.error('Error accessing the camera: ', err);
+//         });
+//     let elements = ['capture', 'player', 'img-view', 'start-camera'];
+
+//     elements.forEach(id => {
+//         let element = document.getElementById(id);
+//         if (element.style.display === 'none') {
+//             element.style.display = 'block';
+//         } else {
+//             element.style.display = 'none';
+//         }
+//     });
+// });
+
 document.getElementById('submitBtn2').addEventListener('click', function captureAndSendImage() {
     let elements = ['result'];
     elements.forEach(id => {
