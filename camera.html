@@ -54,12 +54,6 @@
         // Function to switch between front and back camera
         function switchCamera() {
             currentFacingMode = currentFacingMode === "user" ? "environment" : "user";
-            // Flip camera view horizontally for back camera
-            if (currentFacingMode === "environment") {
-                cameraView.style.transform = "rotateY(180deg)";
-            } else {
-                cameraView.style.transform = "none";
-            }
             cameraStart();
         }
 

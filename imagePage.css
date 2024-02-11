@@ -9,11 +9,6 @@ html {
   font-size: calc(40% + 0.8vmin);
 }
 
-#camera--view {
-  transform: scaleX(-1);
-  transform: rotateY(180deg);
-}
-
 main {
   display: flex;
   align-items: center;
