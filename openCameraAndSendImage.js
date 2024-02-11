@@ -47,7 +47,7 @@ function getCookie(name) {
 
 
 
-document.getElementById('start-camera').addEventListener('click', function startCamera() {
+document.getElementById('switch-camera').addEventListener('click', function switchCamera() {
     let currentFacingMode = constraints.video.facingMode;
 
     if (currentFacingMode === 'environment') {
@@ -76,6 +76,7 @@ document.getElementById('start-camera').addEventListener('click', function start
         }
     });
 });
+
 
 // document.getElementById('start-camera').addEventListener('click', function startCamera() {
 //     navigator.mediaDevices.getUserMedia(constraints)
