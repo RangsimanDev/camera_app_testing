@@ -17,9 +17,10 @@
             <p>วัดความสุกและดิบของทุเรียน</p>
             <p class='subtitle'>“ ด้วยภาพ ”</p>
         </div>
-        <div class='container'>
-            <video id='camera--view' autoplay></video>
-        </div>
+        <video id='camera--view' autoplay></video>
+        <!-- <div class='container'>
+            
+        </div> -->
         <div class='btn-group'>
             <button type='button' id='camera--open' style="width: 25rem; height:6rem;">
                 <span class="material-symbols-outlined" style="font-size: 50px;">photo_camera</span>
@@ -31,8 +32,6 @@
     <script>
         // Set constraints for the video stream
         var constraints = { video: { facingMode: "environment" }, audio: false };
-        var currentFacingMode = "environment"; // Default to back camera
-
         // Define constants
         const cameraView = document.querySelector("#camera--view"),
             cameraOpen = document.querySelector("#camera--open"),
@@ -41,12 +40,8 @@
         // Access the device camera and stream to cameraView
         function cameraStart() {
             navigator.mediaDevices
-                .getUserMedia({ video: { facingMode: currentFacingMode }, audio: false })
+                .getUserMedia(constraints)
                 .then(function (stream) {
-                    if (currentFacingMode === "environment") {
-                        cameraView.style.transform = "scaleX(-1)"; // หรือ scaleY(-1)
-                    }
-                    track = stream.getTracks()[0];
                     cameraView.srcObject = stream;
                 })
                 .catch(function (error) {
@@ -55,10 +50,10 @@
         }
 
         // Function to switch between front and back camera
-        function switchCamera() {
-            currentFacingMode = currentFacingMode === "user" ? "environment" : "user";
-            cameraStart();
-        }
+        // function switchCamera() {
+        //     currentFacingMode = currentFacingMode === "user" ? "environment" : "user";
+        //     cameraStart();
+        // }
 
         // Start the video stream when the window loads
         cameraOpen.onclick = function () {
@@ -66,9 +61,9 @@
         }
 
         // Switch camera button click event
-        switchCameraBtn.onclick = function () {
-            switchCamera();
-        }
+        // switchCameraBtn.onclick = function () {
+        //     switchCamera();
+        // }
     </script>
 
 </body>
