@@ -45,9 +45,13 @@ function getCookie(name) {
     return cookieValue;
 }
 
+// Set constraints for the video stream
+var constraints = { video: { facingMode: "environment" }, audio: false };
+
 document.getElementById('start-camera').addEventListener('click', function startCamera() {
-    navigator.mediaDevices.getUserMedia({ video: { facingMode: { exact: "environment" } }, audio: false })
+    navigator.mediaDevices.getUserMedia(constraints)
         .then(function (stream) {
+            track = stream.getTracks()[0];
             let player = document.getElementById('player');
             player.srcObject = stream;
         })
