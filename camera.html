@@ -35,7 +35,7 @@
                     {% endif %}
                 </label>
                 <video id='player' style='display: none;' autoplay></video>
-                <canvas id='canvas' width="740" height="568" style='display: none;'></canvas>
+                <canvas id='canvas-img' width="740" height="568" style='display: none;'></canvas>
         </div>
         <br>
 
@@ -70,7 +70,7 @@
 
     <script>
         let player = document.getElementById('player');
-        let canvas = document.getElementById('canvas');
+        let canvas = document.getElementById('canvas-img');
         let context = canvas.getContext('2d');
         let csrftoken = getCookie('csrftoken');
 
@@ -195,7 +195,7 @@
                     track.stop();
                 });
                 player.srcObject = null;
-                let elements = ['canvas', 'player', 'capture', 'submitBtn2', 'submitBtn'];
+                let elements = ['canvas-img', 'player', 'capture', 'submitBtn2', 'submitBtn'];
                 elements.forEach(id => {
                     let element = document.getElementById(id);
                     if (element.style.display === 'none') {
