@@ -10,7 +10,8 @@ html {
 }
 
 #camera--view {
-  transform: scaleX(-1); /* พลิกภาพในแกนตั้ง */
+  transform: scaleX(-1);
+  transform: rotateY(180deg);
 }
 
 main {

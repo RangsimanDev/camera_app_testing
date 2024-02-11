@@ -24,7 +24,7 @@
             <button type='button' id='camera--open' style="width: 25rem; height:6rem;">
                 <span class="material-symbols-outlined" style="font-size: 50px;">photo_camera</span>
             </button>
-            <button id="switch-camera" style="width: 25rem; height:6rem;">Switch Camera</button>
+            <button id="switch-camera" style="width: 25rem; height:6rem;">กล้องหน้า</button>
         </div>
     </main>
 
@@ -54,6 +54,12 @@
         // Function to switch between front and back camera
         function switchCamera() {
             currentFacingMode = currentFacingMode === "user" ? "environment" : "user";
+            // Flip camera view horizontally for back camera
+            if (currentFacingMode === "environment") {
+                cameraView.style.transform = "rotateY(180deg)";
+            } else {
+                cameraView.style.transform = "none";
+            }
             cameraStart();
         }
 
