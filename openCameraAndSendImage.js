@@ -46,7 +46,7 @@ function getCookie(name) {
 }
 
 document.getElementById('start-camera').addEventListener('click', function startCamera() {
-    navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: { exact: "environment" } }, audio: false })
         .then(function (stream) {
             let player = document.getElementById('player');
             player.srcObject = stream;
