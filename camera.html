@@ -43,6 +43,9 @@
             navigator.mediaDevices
                 .getUserMedia({ video: { facingMode: currentFacingMode }, audio: false })
                 .then(function (stream) {
+                    // if (currentFacingMode === "environment") {
+                    //     cameraView.style.transform = "scaleX(-1)"; // หรือ scaleY(-1)
+                    // }
                     track = stream.getTracks()[0];
                     cameraView.srcObject = stream;
                 })
