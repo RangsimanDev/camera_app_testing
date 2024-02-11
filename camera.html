@@ -4,11 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TestCamera</title>
+    <title>Document</title>
     <link rel='stylesheet' href='{% static "css/imagePage.css" %}'>
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-    <link rel="stylesheet" href="imagePage.css">
 </head>
 
 <body>
@@ -18,53 +17,194 @@
             <p class='subtitle'>“ ด้วยภาพ ”</p>
         </div>
         <div class='container'>
-            <video id='camera--view' autoplay></video>
+            <form method='post' enctype='multipart/form-data'>
+                {% csrf_token %}
+                <label for='file' class='drag-area'>
+                    {% if prediction %}
+                    <img style='min-height: 28rem;' src='{% if image_url %}{{ image_url }}{% endif %}' />
+                    {% else %}
+                    <input type='file' accept='image/*' name='image' id='file' hidden />
+                    <div id='img-view'>
+                        <div>
+                            <img id='logo' src='{% static "images/icon.png" %}'>
+                            <span class='button'>เลือกภาพ</span>
+                            <span class='support'>รองรับไฟล์ <br> JPEG, JPG, PNG</span>
+                        </div>
+                    </div>
+                    {% endif %}
+                </label>
+                <video id='player' style='display: none;' autoplay></video>
+                <canvas id='canvas' width="740" height="568" style='display: none;'></canvas>
         </div>
+        <br>
+
+        <div class='show-result'>
+            {% if prediction %}
+            <p>ผลลัพธ์</p>
+            {% else %}
+            {% endif %}
+            <p id='result' style='display: none;'>ผลลัพธ์</p>
+            <p id='prediction'>{{ prediction }}</p>
+        </div>
+
+        <p id='message'>{{ message }}</p>
         <div class='btn-group'>
-            <button type='button' id='camera--open' style="width: 25rem; height:6rem;">
+            <button type='submit' id='submitBtn' class='btn' disabled>เริ่มตรวจสอบ</button>
+            </form>
+            <button type='submit' id='submitBtn2' class='btn' style='display: none;' disabled>เริ่มตรวจสอบ</button>
+            <a class='a-btn' href='/imagePage'>เคลียร์</a>
+            {% if prediction %}
+            {% else %}
+            <button type='button' class='btn' id='start-camera'>
                 <span class="material-symbols-outlined" style="font-size: 50px;">photo_camera</span>
             </button>
-            <button id="switch-camera" style="width: 25rem; height:6rem;">กล้องหน้า</button>
+            {% endif %}
+            <button type='button' id='capture' style='display: none;' class='btn'>
+                <span class="material-symbols-outlined"
+                    style="font-size: 80px; display: flex; justify-content: center;">camera</span>
+            </button>
         </div>
+
     </main>
 
     <script>
-        // Set constraints for the video stream
-        var constraints = { video: { facingMode: "environment" }, audio: false };
-        // Define constants
-        const cameraView = document.querySelector("#camera--view"),
-            cameraOpen = document.querySelector("#camera--open"),
-            switchCameraBtn = document.querySelector("#switch-camera");
+        let player = document.getElementById('player');
+        let canvas = document.getElementById('canvas');
+        let context = canvas.getContext('2d');
+        let csrftoken = getCookie('csrftoken');
 
-        // Access the device camera and stream to cameraView
-        function cameraStart() {
-            navigator.mediaDevices
-                .getUserMedia(constraints)
+        const message = document.getElementById('message');
+        const button = document.getElementById('submitBtn');
+        const file = document.getElementById('file');
+        const dropArea = document.getElementById('drag-area');
+        const imageView = document.getElementById('img-view');
+
+        button.addEventListener('click', function () {
+            if (file.files.length === 0) {
+                console.log('No File selected, Please select a file!');
+            } else {
+                message.innerHTML = 'Processing Image....';
+                console.log('Processing Image....');
+            }
+        });
+        file.onchange = function (e) {
+            document.getElementById('submitBtn').disabled = false;
+            document.getElementById('start-camera').disabled = true;
+        }
+
+        file.addEventListener('change', uploadImage);
+        function uploadImage() {
+            file.files[0];
+            let imgLink = URL.createObjectURL(file.files[0]);
+            imageView.style.backgroundImage = `url(${imgLink})`;
+            imageView.textContent = '';
+        }
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                let cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    let cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        document.getElementById('start-camera').addEventListener('click', function startCamera() {
+            navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" }, audio: false })
                 .then(function (stream) {
-                    cameraView.srcObject = stream;
+                    let player = document.getElementById('player');
+                    player.srcObject = stream;
                 })
-                .catch(function (error) {
-                    console.error("Oops. Something is broken.", error);
+                .catch(function (err) {
+                    console.error('Error accessing the camera: ', err);
                 });
-        }
+            let elements = ['capture', 'player', 'img-view', 'start-camera'];
 
-        // Function to switch between front and back camera
-        // function switchCamera() {
-        //     currentFacingMode = currentFacingMode === "user" ? "environment" : "user";
-        //     cameraStart();
-        // }
+            elements.forEach(id => {
+                let element = document.getElementById(id);
+                if (element.style.display === 'none') {
+                    element.style.display = 'block';
+                } else {
+                    element.style.display = 'none';
+                }
+            });
 
-        // Start the video stream when the window loads
-        cameraOpen.onclick = function () {
-            cameraStart();
-        }
+        });
+        document.getElementById('submitBtn2').addEventListener('click', function captureAndSendImage() {
+            let elements = ['result'];
+            elements.forEach(id => {
+                let element = document.getElementById(id);
+                if (element.style.display === 'none') {
+                    element.style.display = 'block';
+                } else {
+                    element.style.display = 'none';
+                }
+            });
+            let imageDataURL = canvas.toDataURL('image/jpeg');
+            var imageDataSplit = imageDataURL.split(',');
+            var imageData = imageDataSplit[1];
+            console.log('Image Data:', imageData);
+            console.log('CSRFToken:', csrftoken);
 
-        // Switch camera button click event
-        // switchCameraBtn.onclick = function () {
-        //     switchCamera();
-        // }
+            let formData = new FormData();
+            formData.append('image_base64', imageData);
+            fetch('/imagePage/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrftoken
+                },
+                body: formData
+            })
+                .then(response => {
+                    if (response.ok) {
+                        return response.text();
+                    } else {
+                        throw new Error('Failed to upload audio file');
+                    }
+                })
+                .then(data => {
+                    debugger;
+                    // ใช้ DOM manipulation เพื่อดึงข้อมูลที่ต้องการจากข้อความ HTML
+                    const parser = new DOMParser();
+                    const htmlDocument = parser.parseFromString(data, 'text/html');
+                    const predictionElement = htmlDocument.getElementById('prediction');
+                    const predictionData = predictionElement.textContent.trim();
+                    // อัปเดตข้อมูลในหน้าเว็บเพจ
+                    document.getElementById('prediction').textContent = predictionData;
+                    document.getElementById('submitBtn2').disabled = true;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        });
+
+        document.getElementById('capture').addEventListener('click',
+            function stopCamera() {
+                let player = document.getElementById('player');
+                context.drawImage(player, 0, 0, canvas.width, canvas.height);
+                let stream = player.srcObject;
+                let tracks = stream.getTracks();
+                tracks.forEach(function (track) {
+                    track.stop();
+                });
+                player.srcObject = null;
+                let elements = ['canvas', 'player', 'capture', 'submitBtn2', 'submitBtn'];
+                elements.forEach(id => {
+                    let element = document.getElementById(id);
+                    if (element.style.display === 'none') {
+                        element.style.display = 'block';
+                        element.disabled = false;
+                    } else {
+                        element.style.display = 'none';
+                    }
+                });
+            });
     </script>
-
 </body>
-
 </html>
