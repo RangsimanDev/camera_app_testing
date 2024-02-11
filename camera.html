@@ -1,51 +1,33 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="”en”">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TestCamera</title>
-    <link rel='stylesheet' href='{% static "css/imagePage.css" %}'>
-    <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-    <link rel="stylesheet" href="imagePage.css">
+  <meta charset="utf-8" />
+  <meta http-equiv="x-ua-compatible" content="ie=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- Name of your awesome camera app -->
+  <title>Camera App</title>
+  <!-- Link to your main style sheet-->
+  <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
-    <main>
-        <div class='title'>
-            <p>วัดความสุกและดิบของทุเรียน</p>
-            <p class='subtitle'>“ ด้วยภาพ ”</p>
-        </div>
-        <div class='container'>
-            <video id='camera--view' style='display: none;' autoplay></video>
-        </div>
-        <div class='btn-group'>
-            <button type='button' class='btn' id='camera--open'>
-                <span class="material-symbols-outlined" style="font-size: 50px;">photo_camera</span>
-            </button>
-            <button id="switch-camera" style="width: 30rem; height:5rem;">Switch Camera</button>
-        </div>
-    </main>
+  <main class="container">
+    <!-- Camera view -->
+    <div class="cam-view">
+      <video id="camera--view" autoplay></video>
+    </div>
 
-    <script>
-        var constraints = { video: { facingMode: "environment" }, audio: false };
-        // Define constants
-        const cameraView = document.querySelector("#camera--view"),
-            cameraOpen = document.querySelector("#camera--open")
-        // Access the device camera and stream to cameraView
-        function cameraStart() {
-            navigator.mediaDevices
-                .getUserMedia(constraints)
-                .then(function (stream) {
-                    track = stream.getTracks()[0];
-                    cameraView.srcObject = stream;
-                })
-                .catch(function (error) {
-                    console.error("Oops. Something is broken.", error);
-                });
-        }
-    </script>
+    <!-- Camera trigger -->
+    <div class="button-group">
+      <button id="camera--trigger">Take a picture</button>
+      <div style="margin: 0 8rem 0 0;"></div>
+      <button id="camera--open">Open a Camera</button>
+    </div>
+
+  </main>
+
+  <script src="app.js"></script>
 </body>
 
 </html>
