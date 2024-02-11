@@ -9,6 +9,10 @@ html {
   font-size: calc(40% + 0.8vmin);
 }
 
+#camera--view{
+  transform: scaleX(-1);
+}
+
 main {
   display: flex;
   align-items: center;
