@@ -10,7 +10,7 @@ html {
 }
 
 #camera--view{
-  transform: scaleX(-1);
+  transform: scaleX(1);
 }
 
 main {
